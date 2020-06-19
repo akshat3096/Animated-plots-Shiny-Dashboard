@@ -1,0 +1,59 @@
+ui <- fluidPage(theme = shinytheme("sandstone"),
+  titlePanel("Your own fitness tracker dashboard"),
+  tabsetPanel(
+    tabPanel("Introduction",
+             fluidRow(
+               column(4,textAreaInput("summary","   
+                                      Introduction"))
+             )),
+    tabPanel("What is R shiny?",
+             fluidRow(column(4,textAreaInput("summary","Introuction to Shiny"))),
+              fluidRow(column(4,textAreaInput("summary","Components of a Shiny app"))
+             )),
+    tabPanel("Why use R shiny?",
+             fluidRow(
+               column(4,textAreaInput("summary","Benefits of using Shiny"))
+             )),
+    tabPanel("Active Heart Rate Analysis",
+             fluidRow(
+               column(3,plotOutput("plot1"))
+             ,column(3,textAreaInput("summary", "Observations Drawn",
+                                     "Normal resting heart-rate should be somewhere between 60-100 bpm and the normal active heart-rate should be between 100-120 bpm.There have been times when the heart rate has crossed these boundaries. It could potentially be that there was some extra activity done on those days. Could the data points be outliers? Let's look at the median heart-rate values to figure this out",width="400px",height="400px"),offset = 3))
+             ,column(8, plotOutput("plot2"))),
+    tabPanel("Step count Analysis",
+             fluidRow(
+               column(3,plotOutput("plot3")),
+               column(3,textAreaInput("summary","Observations Drawn","Many recent studies reveal that you need to take a certain amount of steps per day to stay healthy. For the purposes of our project here, we'll assume the below categories apply:
+Less than 5,000 steps a day - sedentary
+Between 5,000-7,500 - low on activity
+Between 7,500 and 10,000 - somewhat active
+More than 10,000 - really active
+This plot shows I was somewhat active till May 2018 and then started taking more steps daily. An increasing trend is clearly visible till 2018 after which it begins to decrease in 2019",width="400px",height="400px"),offset=3),
+               column(8,plotOutput("plot4"))
+             )),
+    tabPanel("Stairs Climbed",
+             fluidRow(
+               column(3,plotOutput("plot5")),
+               column(3,textAreaInput("summary","Observations Drawn","The maximum number of stairs climbed is in September and November 2018. There's a logical explanation to that - I was part of the organizing team at a conference. Hence, the spike in the data.
+
+Now here, we can correlate our findings with the burned energy plot we saw earlier. We saw a decreasing trend in the energy burned in 2019, right? Notice how the number of stairs climbed is decreasing in 2019. That's partly down to inadequate data again in April 2019",width="400px",height="400px"),offset = 3)
+             )),
+    tabPanel("Distance Covered",
+             fluidRow(
+               column(3,plotOutput("plot6")),
+               column(3,textAreaInput("summary","Observations Drawn","Aggregating the distance traveled (in kilometers) for different months corresponding to their respective years.As expected, the distance traveled in November 2018 really stands out.",width = "400px",height = "400px"),offset=3)
+             )),
+    tabPanel("Active Energy burned",
+             fluidRow(
+               column(3,plotOutput("plot7")),
+               column(3,plotOutput("plot8"),offset = 3),
+               column(8,textAreaInput("summary","Observations Drawn","A good amount of active calories have been burnt on most days. The range falls between 400-600 kcal daily. But there are a number of observations where the calories burnt are between 0-200 kcal.
+
+So, in order to transition to a healthier lifestyle, I should burn about 500 calories every day in order to lose 1 pound in a week.
+
+There is a sharp decline towards the end of our plot due to an inadequate number of observations for April 2019.
+                                      To understand which days require more physical activity to burn the required amount of calories, we can draw up a heatmap. Let's do this in a way such that every day of every month is taken into account.",width = "400px",height = "400px"))
+               
+             )) 
+    
+  ))
