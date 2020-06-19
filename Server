@@ -1,0 +1,140 @@
+server <- function(input, output,session) {
+  
+  #putting the animations into the body
+  output$plot1 <- renderImage({
+
+    outfile <- tempfile(fileext='.gif')
+    
+    # now make the animation
+    p =ggplot(heart_rate,aes(x=date, y=heart_rate, group=year)) + 
+      geom_line(aes(colour=year))+
+      ggtitle("Daily Mean heartrate")+
+      xlab("Month/Year")+transition_reveal(as.numeric(date))
+    
+    anim_save("outfile.gif", animate(p,width = 400, height = 400)) 
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+    },deleteFile = TRUE)
+    
+  output$plot2 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p1 =  ggplot(heart_rate1,aes(x=date, y=heart_rate, group=year)) + 
+      geom_line(aes(colour=year))+
+      ggtitle("Daily Median heartrate")+
+      xlab("Month/Year")+
+      transition_reveal(as.numeric(date))
+    
+    anim_save("outfile.gif", animate(p1,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  output$plot3 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p2 = ggplot(steps,aes(x=date, y=steps, group=year)) + 
+      geom_line(aes(colour=year))+
+      ggtitle("Total Steps Everyday")+
+      xlab("Month/Year")+transition_reveal(as.numeric(date))
+    
+    
+    anim_save("outfile.gif", animate(p2,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+    
+  
+  output$plot4 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p3 = ggplot(step_count,aes(x=month, y=step_count, group=dayofweek)) + 
+      geom_line(aes(colour=dayofweek),size=1.5)+
+      theme_minimal()+
+      ggtitle("Weekly median stepcount for 2019")+
+      geom_point() +
+      transition_reveal(as.numeric(month))
+    
+    anim_save("outfile.gif", animate(p3,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  output$plot5 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p4 =  ggplot(flight,aes(x=month, y=flights, fill=year)) + 
+      geom_bar(position='dodge', stat='identity') +
+      scale_y_continuous(labels = scales::comma) +
+      theme(panel.grid.major = element_blank())+
+      ggtitle("Total flight of stairs climbed")+transition_states(month, wrap = FALSE) +
+      shadow_mark()
+      
+    anim_save("outfile.gif", animate(p4,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  output$plot6 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p4 =  ggplot(distance,aes(x=month, y=distance, fill=year)) + 
+      geom_bar(position='dodge', stat='identity') +
+      scale_y_continuous(labels = scales::comma) +
+      theme(panel.grid.major = element_blank())+transition_states(month, wrap = FALSE) +
+      shadow_mark()+ enter_fade() + 
+      exit_shrink()
+    
+    anim_save("outfile.gif", animate(p4,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  output$plot7 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p4 =  ggplot(energy,aes(x=date, y=energy_burned, group=year)) + 
+      geom_line(aes(colour=year))+
+      ggtitle("Total Energy burned")+transition_reveal(as.numeric(date))
+    
+    anim_save("outfile.gif", animate(p4,width = 400, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  output$plot8 <- renderImage({
+    outfile <- tempfile(fileext='.gif')
+    
+    #animation
+    p4 = ggplot(f,
+                aes(dayofweek, week_date, fill = f$total_cal)) +
+      ggtitle("Calendar Heatmap for Total Calories burned in 2018")+
+      geom_tile(colour = "white") +
+      facet_wrap(~month) +
+      theme_bw() +
+      scale_fill_gradient(name = "Total \nCalories",
+                          low ="#56B1F7" , high = "#132B43") +
+      labs(x = "Day of the Week",
+           y = "Week number") +
+      scale_y_continuous(trans = "reverse")+ transition_states(dayofweek, wrap = FALSE)
+    
+    anim_save("outfile.gif", animate(p4,width = 800, height = 400))
+    
+    list(src = "outfile.gif",
+         contentType = 'image/gif')
+  },deleteFile = TRUE)
+  
+  }  
