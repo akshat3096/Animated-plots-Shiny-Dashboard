@@ -1,0 +1,97 @@
+
+library(ggplot2)
+library(shiny)
+library(gganimate)
+library(XML)
+library(lubridate)
+library(tidyverse)
+library(shinydashboard)
+
+library(shinythemes)
+
+
+#reading in the data
+setwd("~/Documents/White paper contest")
+xml <- xmlParse("export.xml")
+summary(xml)
+
+df <- XML:::xmlAttrsToDataFrame(xml["//Record"])
+df$value <- as.numeric(as.character(df$value))
+head(df)
+table(df$type)
+
+#make endDate in a date time variable POSIXct using lubridate with indian time zone
+df$endDate <-ymd_hms(df$endDate,tz="UTC")
+
+
+##add in year month date dayofweek hour columns
+df$month<-format(df$endDate,"%m")
+df$year<-format(df$endDate,"%Y")
+df$date<-format(df$endDate,"%Y-%m-%d")
+df$dayofweek <-wday(df$endDate, label=TRUE, abbr=TRUE)
+head(df$dayofweek)
+df$hour <-format(df$endDate,"%H")
+
+#mean line plot of the heart rate
+heart_rate <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierHeartRate') %>%
+  group_by(date,year,month) %>%
+  summarize(heart_rate=mean(value)) 
+heart_rate$date <- as.Date(heart_rate$date,"%Y-%m-%d")
+
+#median line plot of the heart rate 
+heart_rate1 <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierHeartRate') %>%
+  group_by(date,year,month) %>%
+  summarize(heart_rate=median(value))
+heart_rate1$date <- as.Date(heart_rate$date,"%Y-%m-%d")
+
+# daily total steps count
+steps <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierStepCount') %>%
+  group_by(date,year,month) %>%
+  summarize(steps=sum(value))
+
+steps$date <- as.Date(steps$date,"%Y-%m-%d")
+
+# weekly mean steps 
+step_count <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierStepCount') %>%
+  filter(year==2019) %>% 
+  group_by(dayofweek,year,month) %>%
+  summarize(step_count=median(value)) 
+
+
+#flights count
+flight <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierFlightsClimbed') %>%
+  group_by(year,month) %>%
+  summarize(flights=sum(value)) %>%
+  print (n=100) 
+
+#distance covered
+distance <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierDistanceWalkingRunning') %>%
+  group_by(year,month) %>%
+  summarize(distance=sum(value)) %>%
+  print (n=100)
+
+# Active energy burned 
+energy <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierActiveEnergyBurned') %>%
+  group_by(date,year,month) %>%
+  summarize(energy_burned=sum(value))
+
+# calendar heatmap: year wise calories burned
+f <- df %>%
+  filter(type == 'HKQuantityTypeIdentifierActiveEnergyBurned') %>% 
+  filter(year==2018) %>% 
+  mutate(week_date = ceiling(day(creationDate) / 7)) %>%
+  group_by(week_date, month, dayofweek) %>%
+  summarise(total_cal = sum(value))
+
+
+energy$date <- as.Date(energy$date,"%Y-%m-%d")
+
+theme_set(theme_bw())
+
